@@ -607,39 +607,42 @@ function openGift(skip = false) {
   }
 
   if (typeof gsap !== 'undefined' && !skip && !motionReduced) {
-    if (env) {
-      gsap.to(env, {
-        scale: 2.4,
-        filter: 'blur(20px)',
-        opacity: 0,
-        duration: 1.25,
-        ease: 'power3.inOut'
-      });
-    }
-    gsap.to(welcome, {
-      opacity: 0,
-      scale: 1.08,
-      duration: 1.2,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        welcome.close();
-        document.body.classList.remove('dialog-open');
-        root.classList.add('gift-opened');
-        giftOpened = true;
-        animateHeroFanOut();
-        syncFilm();
-        burst(width * 0.5, height * 0.45, 95);
+    // Cho phép người dùng nhìn thấy nắp thư mở và lá thư trượt lên nằm trọn trong bao thư trước khi phóng qua camera
+    gsap.delayedCall(0.75, () => {
+      if (env) {
+        gsap.to(env, {
+          scale: 2.4,
+          filter: 'blur(20px)',
+          opacity: 0,
+          duration: 1.15,
+          ease: 'power3.inOut'
+        });
       }
-    });
-    gsap.fromTo('#home', {
-      scale: 1.12,
-      filter: 'blur(12px)'
-    }, {
-      scale: 1,
-      filter: 'blur(0px)',
-      duration: 1.5,
-      ease: 'expo.out',
-      delay: 0.2
+      gsap.to(welcome, {
+        opacity: 0,
+        scale: 1.08,
+        duration: 1.1,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          welcome.close();
+          document.body.classList.remove('dialog-open');
+          root.classList.add('gift-opened');
+          giftOpened = true;
+          animateHeroFanOut();
+          syncFilm();
+          burst(width * 0.5, height * 0.45, 95);
+        }
+      });
+      gsap.fromTo('#home', {
+        scale: 1.12,
+        filter: 'blur(12px)'
+      }, {
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: 1.5,
+        ease: 'expo.out',
+        delay: 0.1
+      });
     });
   } else {
     setTimeout(() => {
