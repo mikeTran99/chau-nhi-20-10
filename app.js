@@ -96,29 +96,47 @@ function applyTheme(theme, userTriggered = false) {
     if (isGhibli) {
       if (icon) icon.textContent = '✨';
       if (label) label.textContent = 'Vũ trụ Luxury';
-      toggleBtn.setAttribute('aria-label', 'Chuyển về phong cách Vũ trụ Luxury lãng mạn');
+      toggleBtn.setAttribute('aria-label', 'Chuyển sang phong cách Vũ trụ Luxury lãng mạn');
     } else {
-      if (icon) icon.textContent = '🌸';
-      if (label) label.textContent = 'Ghibli Anime';
-      toggleBtn.setAttribute('aria-label', 'Chuyển sang phong cách Ghibli Anime Kawaii');
+      if (icon) icon.textContent = '🍃';
+      if (label) label.textContent = 'Ghibli Đồng Cỏ';
+      toggleBtn.setAttribute('aria-label', 'Chuyển về phong cách Ghibli Anime Đồng Cỏ');
     }
   }
 
   if (emblem) {
     emblem.src = isGhibli ? 'assets/ghibli-emblem-2k.webp' : 'assets/emerald-sky-emblem-2k.webp';
+    emblem.style.transform = 'scale(0.8) rotate(180deg)';
+    setTimeout(() => { emblem.style.transform = ''; }, 350);
   }
 
   // Reseed canvas particles for the chosen style
   resizeCanvas();
 
   if (userTriggered) {
+    // Screen transition ripple overlay
+    const ripple = document.createElement('div');
+    ripple.className = 'theme-transition-ripple';
+    ripple.style.background = isGhibli
+      ? 'radial-gradient(circle, rgba(149, 213, 178, 0.45) 0%, rgba(16, 38, 31, 0.95) 75%)'
+      : 'radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(2, 6, 17, 0.95) 75%)';
+    document.body.appendChild(ripple);
+    requestAnimationFrame(() => ripple.classList.add('active'));
+    setTimeout(() => ripple.remove(), 600);
+
     playASMR(isGhibli ? 'ghibli-sparkle' : 'sparkle');
-    notice(isGhibli ? 'Đã bật phong cách Ghibli Anime Kawaii 🌸' : 'Đã bật phong cách Vũ trụ Lãng mạn ✨');
-    burst(width * 0.5, height * 0.35, 75);
+    notice(isGhibli ? '🍃 Đã chuyển sang: Ghibli Anime Đồng Cỏ Mùa Hè 🌸' : '✨ Đã chuyển sang: Vũ trụ Luxury Lãng Mạn 🌌');
+    if (toggleBtn) {
+      const rect = toggleBtn.getBoundingClientRect();
+      burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 75);
+    } else {
+      burst(width * 0.5, height * 0.35, 75);
+    }
   }
 }
 
-$('#theme-toggle')?.addEventListener('click', () => {
+$('#theme-toggle')?.addEventListener('click', (e) => {
+  e.preventDefault();
   const nextTheme = currentTheme === 'ghibli' ? 'cosmic' : 'ghibli';
   applyTheme(nextTheme, true);
 });
@@ -582,26 +600,67 @@ function openGift(skip = false) {
   playASMR('envelope');
 
   welcome.classList.add('opening');
-  if (welcome.querySelector('.envelope')) {
-    const rect = welcome.querySelector('.envelope').getBoundingClientRect();
+  const env = welcome.querySelector('.envelope');
+  if (env) {
+    const rect = env.getBoundingClientRect();
     burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 85);
   }
 
-  setTimeout(() => {
-    welcome.close();
-    document.body.classList.remove('dialog-open');
-    root.classList.add('gift-opened');
-    giftOpened = true;
-
-    const destination = skip ? $('#letter') : $('#home');
-    if (destination) {
-      destination.tabIndex = -1;
-      destination.focus({ preventScroll: true });
-      if (skip) destination.scrollIntoView({ behavior: motionReduced ? 'instant' : 'smooth' });
+  if (typeof gsap !== 'undefined' && !skip && !motionReduced) {
+    if (env) {
+      gsap.to(env, {
+        scale: 2.4,
+        filter: 'blur(20px)',
+        opacity: 0,
+        duration: 1.25,
+        ease: 'power3.inOut'
+      });
     }
-    syncFilm();
-    if (!motionReduced) burst(width * 0.5, height * 0.45, 95);
-  }, motionReduced ? 0 : 1350);
+    gsap.to(welcome, {
+      opacity: 0,
+      scale: 1.08,
+      duration: 1.2,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        welcome.close();
+        document.body.classList.remove('dialog-open');
+        root.classList.add('gift-opened');
+        giftOpened = true;
+        animateHeroFanOut();
+        syncFilm();
+        burst(width * 0.5, height * 0.45, 95);
+      }
+    });
+    gsap.fromTo('#home', {
+      scale: 1.12,
+      filter: 'blur(12px)'
+    }, {
+      scale: 1,
+      filter: 'blur(0px)',
+      duration: 1.5,
+      ease: 'expo.out',
+      delay: 0.2
+    });
+  } else {
+    setTimeout(() => {
+      welcome.close();
+      document.body.classList.remove('dialog-open');
+      root.classList.add('gift-opened');
+      giftOpened = true;
+
+      const destination = skip ? $('#letter') : $('#home');
+      if (destination) {
+        destination.tabIndex = -1;
+        destination.focus({ preventScroll: true });
+        if (skip) destination.scrollIntoView({ behavior: motionReduced ? 'instant' : 'smooth' });
+      }
+      syncFilm();
+      if (!motionReduced) {
+        burst(width * 0.5, height * 0.45, 95);
+        animateHeroFanOut();
+      }
+    }, motionReduced ? 0 : 750);
+  }
 }
 
 $('#open-gift')?.addEventListener('click', () => openGift(false));
@@ -1298,6 +1357,414 @@ function initScrollRevealText() {
   elements.forEach(el => observer.observe(el));
 }
 
+/* ==========================================================================
+   LENIS SMOOTH SCROLL & AFTER EFFECTS GSAP CHOREOGRAPHY
+   ========================================================================== */
+let lenis = null;
+function initLenisSmoothScroll() {
+  if (typeof Lenis === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  try {
+    lenis = new Lenis({
+      duration: 1.25,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 0.9,
+    });
+
+    if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+    }
+  } catch (e) {
+    console.warn('Lenis scroll init:', e);
+  }
+}
+
+function animateHeroFanOut() {
+  if (typeof gsap === 'undefined' || motionReduced) return;
+  const heroSection = $('#home');
+  if (!heroSection) return;
+  const heroFigures = heroSection.querySelectorAll('figure');
+  const heroHeading = heroSection.querySelector('h1');
+
+  if (heroFigures.length >= 3) {
+    gsap.fromTo(
+      heroFigures,
+      {
+        y: 75,
+        rotation: 0,
+        scale: 0.85,
+        opacity: 0,
+        filter: 'blur(8px)',
+      },
+      {
+        y: 0,
+        rotation: (i) => (i === 0 ? -6 : i === 1 ? 4 : -2),
+        scale: 1,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 1.6,
+        stagger: 0.18,
+        ease: 'expo.out',
+        delay: 0.3,
+      }
+    );
+
+    // 3D Parallax Mouse Tilt on Desktop
+    heroSection.addEventListener('mousemove', (e) => {
+      if (motionReduced || window.innerWidth < 768) return;
+      const xNorm = (e.clientX / window.innerWidth - 0.5) * 2;
+      const yNorm = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      heroFigures.forEach((fig, idx) => {
+        const depth = (idx + 1) * 12;
+        gsap.to(fig, {
+          x: xNorm * depth,
+          y: yNorm * depth,
+          rotationY: xNorm * 7,
+          rotationX: -yNorm * 7,
+          duration: 0.8,
+          ease: 'power2.out',
+        });
+      });
+    });
+  }
+
+  if (heroHeading && typeof ScrollTrigger !== 'undefined') {
+    gsap.fromTo(
+      heroHeading,
+      {
+        y: 55,
+        opacity: 0,
+        rotationX: -32,
+        skewY: 3,
+        filter: 'blur(6px)',
+      },
+      {
+        y: 0,
+        opacity: 1,
+        rotationX: 0,
+        skewY: 0,
+        filter: 'blur(0px)',
+        duration: 1.4,
+        ease: 'expo.out',
+        delay: 0.2
+      }
+    );
+
+    gsap.to(heroHeading, {
+      yPercent: -25,
+      opacity: 0.25,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: heroSection,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      },
+    });
+  }
+}
+
+function initAEMotionGraphics() {
+  if (typeof gsap === 'undefined' || motionReduced) return;
+  if (typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+
+  const sections = document.querySelectorAll('main > section');
+  const heroSection = sections[0];
+  const memoriesSection = sections[1];
+  const videoSection = sections[2];
+  const gallerySection = sections[3];
+  const letterSection = sections[4];
+
+  // A. KINETIC TYPOGRAPHY FOR ALL MAIN H2 HEADINGS
+  document.querySelectorAll('main section h2').forEach((h2) => {
+    gsap.fromTo(
+      h2,
+      {
+        y: 55,
+        opacity: 0,
+        rotationX: -32,
+        skewY: 3,
+        transformOrigin: '50% 100%',
+        filter: 'blur(6px)',
+      },
+      {
+        y: 0,
+        opacity: 1,
+        rotationX: 0,
+        skewY: 0,
+        filter: 'blur(0px)',
+        duration: 1.3,
+        ease: 'expo.out',
+        scrollTrigger: {
+          trigger: h2,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    );
+  });
+
+  // B. CHƯƠNG 01: CLIP-PATH CURTAIN REVEAL & STAGGERED PARALLAX
+  if (memoriesSection) {
+    const memFigures = memoriesSection.querySelectorAll('figure');
+    memFigures.forEach((fig, index) => {
+      const img = fig.querySelector('img');
+
+      gsap.fromTo(
+        fig,
+        { clipPath: 'inset(18% 8% 18% 8% round 24px)', y: 45 },
+        {
+          clipPath: 'inset(0% 0% 0% 0% round 16px)',
+          y: 0,
+          duration: 1.4,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: fig,
+            start: 'top 85%',
+          },
+        }
+      );
+
+      if (img) {
+        gsap.fromTo(
+          img,
+          { scale: 1.22, yPercent: -8 },
+          {
+            scale: 1,
+            yPercent: 8,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: fig,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            },
+          }
+        );
+      }
+
+      gsap.to(fig, {
+        y: index % 2 === 0 ? -30 : 25,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: memoriesSection,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+    });
+  }
+
+  // C. VIDEO INTERLUDE: SCROLL-SCRUBBED IRIS / ARCH CLIP-PATH
+  if (videoSection) {
+    const videoEl = videoSection.querySelector('video');
+    const videoText = videoSection.querySelector('.cinema-copy') || videoSection.querySelector('div:last-of-type');
+
+    gsap.fromTo(
+      videoSection,
+      {
+        clipPath: 'inset(12% 14% 12% 14% round 160px)',
+      },
+      {
+        clipPath: 'inset(0% 0% 0% 0% round 0px)',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: videoSection,
+          start: 'top 85%',
+          end: 'top 15%',
+          scrub: 0.8,
+        },
+      }
+    );
+
+    if (videoEl) {
+      gsap.fromTo(
+        videoEl,
+        { scale: 1.25 },
+        {
+          scale: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: videoSection,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        }
+      );
+    }
+
+    if (videoText) {
+      gsap.fromTo(
+        videoText,
+        { y: 50, opacity: 0, scale: 0.94, filter: 'blur(8px)' },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 1.4,
+          ease: 'expo.out',
+          scrollTrigger: {
+            trigger: videoSection,
+            start: 'top 55%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }
+  }
+
+  // D. CHƯƠNG 02 (17 KHUNG HÌNH): VELOCITY SKEW INERTIA
+  if (gallerySection) {
+    let proxy = { skew: 0 };
+    let skewSetter = gsap.quickSetter(gallerySection, 'skewY', 'deg');
+    let clamp = gsap.utils.clamp(-3.5, 3.5);
+
+    ScrollTrigger.create({
+      trigger: gallerySection,
+      start: 'top bottom',
+      end: 'bottom top',
+      onUpdate: (self) => {
+        let skew = clamp(self.getVelocity() / -450);
+        if (Math.abs(skew) > Math.abs(proxy.skew)) {
+          proxy.skew = skew;
+          gsap.to(proxy, {
+            skew: 0,
+            duration: 0.8,
+            ease: 'power3',
+            overwrite: true,
+            onUpdate: () => skewSetter(proxy.skew),
+          });
+        }
+      },
+    });
+  }
+
+  // E. CHƯƠNG 03 (LÁ THƯ): 3D FOLD-UP & SVG TRIM-PATH SIGNATURE
+  if (letterSection) {
+    const article = letterSection.querySelector('article');
+    if (article) {
+      const paragraphs = article.querySelectorAll('p, blockquote');
+      const signature = article.querySelector('.letter-signature') || article.querySelector('div:last-of-type');
+
+      gsap.fromTo(
+        article,
+        { y: 65, rotationX: 12, opacity: 0, transformPerspective: 1200 },
+        {
+          y: 0,
+          rotationX: 0,
+          opacity: 1,
+          duration: 1.4,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: article,
+            start: 'top 80%',
+          },
+        }
+      );
+
+      gsap.fromTo(
+        paragraphs,
+        { y: 22, opacity: 0, filter: 'blur(4px)' },
+        {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1,
+          stagger: 0.12,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: article,
+            start: 'top 72%',
+          },
+        }
+      );
+
+      if (signature) {
+        signature.classList.add('ae-signature-line');
+        gsap.fromTo(
+          signature,
+          { clipPath: 'inset(0 100% 0 0)', opacity: 0.3 },
+          {
+            clipPath: 'inset(0 0% 0 0)',
+            opacity: 1,
+            duration: 1.8,
+            ease: 'power2.inOut',
+            scrollTrigger: {
+              trigger: signature,
+              start: 'top 90%',
+              onEnter: () => signature.classList.add('is-drawn'),
+            },
+          }
+        );
+      }
+    }
+  }
+
+  // F. MARQUEE VELOCITY ACCELERATION & REVERSAL
+  if (lenis) {
+    const ribbonContainer = document.querySelector('.love-ribbon > div');
+    if (ribbonContainer) {
+      let offset = 0;
+      lenis.on('scroll', (e) => {
+        const vel = e.velocity || 0;
+        offset += vel * 0.15;
+        ribbonContainer.style.transform = `translateX(${offset % 400}px)`;
+      });
+    }
+  }
+}
+
+/* ==========================================================================
+   DESKTOP MAGNETIC STARLIGHT CURSOR
+   ========================================================================== */
+function initMagneticCursor() {
+  const dot = document.querySelector('.ae-cursor-dot');
+  const ring = document.querySelector('.ae-cursor-ring');
+  if (!dot || !ring || !finePointer.matches || motionReduced) return;
+
+  let cx = innerWidth / 2;
+  let cy = innerHeight / 2;
+  let rx = cx;
+  let ry = cy;
+
+  window.addEventListener('pointermove', (e) => {
+    cx = e.clientX;
+    cy = e.clientY;
+    dot.style.transform = `translate(${cx}px, ${cy}px)`;
+  }, { passive: true });
+
+  function updateCursorRing() {
+    rx += (cx - rx) * 0.15;
+    ry += (cy - ry) * 0.15;
+    ring.style.transform = `translate(${rx}px, ${ry}px)`;
+    requestAnimationFrame(updateCursorRing);
+  }
+  requestAnimationFrame(updateCursorRing);
+
+  document.querySelectorAll('.gallery-photo, .memory-photo, .hero-photo, .hug-button').forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      ring.classList.add('is-hovering-photo');
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.classList.remove('is-hovering-photo');
+    });
+  });
+}
+
 // Initialize on load
 applyTheme(currentTheme, false);
 resizeCanvas();
@@ -1306,4 +1773,7 @@ updateProgress();
 syncSoundLabels();
 initPhotoTiltEffects();
 initScrollRevealText();
+initLenisSmoothScroll();
+initAEMotionGraphics();
+initMagneticCursor();
 
