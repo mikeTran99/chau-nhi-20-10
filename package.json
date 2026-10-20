@@ -1,0 +1,6 @@
+{
+  "name": "a-universe-for-chau-nhi",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node server.mjs", "test": "node --test" }
+}

@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="vi" data-theme="ghibli">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10261f">
+  <meta name="description" content="Một vũ trụ, chỉ có em. Món quà 20/10/2026 Minh Trung dành riêng cho Nguyễn Hoàng Châu Nhi.">
+  <title>Châu Nhi · Một vũ trụ, chỉ có em</title>
+  <link rel="icon" type="image/webp" href="assets/ghibli-emblem-2k.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Quicksand:wght@500;600;700&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#letter">Đến lời chúc dành cho em</a>
+  <canvas id="universe" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="pointer-glow" aria-hidden="true"></div>
+  <div class="reading-progress" aria-hidden="true"></div>
+
+  <!-- Welcome / Gift Unveiling Modal -->
+  <dialog id="welcome" aria-labelledby="welcome-title">
+    <div class="welcome-sky" aria-hidden="true"></div>
+    <div class="welcome-content">
+      <span class="eyebrow">20 THÁNG 10, 2026 · MÓN QUÀ DÀNH CHO EM</span>
+      <span class="welcome-star" aria-hidden="true">✧</span>
+      <p class="welcome-to">Gửi Nguyễn Hoàng Châu Nhi</p>
+      <h2 id="welcome-title">Có một điều <em>dịu dàng,</em><br>dành riêng cho em.</h2>
+      
+      <button class="envelope" id="open-gift" aria-label="Mở món quà của em">
+        <span class="envelope-letter" aria-hidden="true">Nhi thương,</span>
+        <span class="envelope-back" aria-hidden="true"></span>
+        <span class="envelope-flap" aria-hidden="true"></span>
+        <span class="envelope-front" aria-hidden="true"></span>
+        <span class="wax-seal" aria-hidden="true">♥</span>
+      </button>
+
+      <p class="open-caption">Chạm vào phong thư để mở món quà <span>↗</span></p>
+      <button class="intro-sound text-button" id="intro-sound" aria-pressed="false">♫ Bật nhạc & ASMR ngọt ngào</button><br>
+      <button class="text-button" id="skip-intro">Đến thẳng lời yêu <span aria-hidden="true">→</span></button>
+      <p class="welcome-from">Từ Minh Trung, bằng tất cả yêu thương.</p>
+    </div>
+    <span class="corner-note" aria-hidden="true">MỘT MÓN QUÀ NHỎ · MỘT TÌNH YÊU LỚN</span>
+  </dialog>
+
+  <!-- Site Navigation Header -->
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Về đầu trang, Trung và Nhi">
+      <img id="brand-emblem" class="brand-ai" src="assets/ghibli-emblem-2k.webp" alt="Biểu tượng tình yêu Châu Nhi và Minh Trung phong cách Ghibli" width="80" height="80">
+      <span class="brand-label">MỘT VŨ TRỤ<br>CHỈ CÓ EM</span>
+    </a>
+    <nav aria-label="Các chương">
+      <a href="#memories">Ký ức của mình</a>
+      <a href="#gallery">Khoảnh khắc yêu thương</a>
+      <a href="#letter">Thư gửi em</a>
+    </nav>
+    <div class="header-actions">
+      <button class="theme-button" id="theme-toggle" aria-label="Chuyển sang phong cách Vũ trụ Luxury lãng mạn">
+        <span class="theme-icon" aria-hidden="true">✨</span>
+        <span class="theme-label">Vũ trụ Luxury</span>
+      </button>
+      <button class="motion-button" id="motion-toggle" aria-pressed="false" aria-label="Giảm hiệu ứng chuyển động">
+        <span aria-hidden="true">✧</span>
+        <span class="motion-label">Hiệu ứng đầy đủ</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Section 00: Hero Presentation -->
+    <section class="hero section" id="home" aria-labelledby="hero-title">
+      <div class="hero-atmosphere" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="eyebrow hero-enter">20.10.2026 <span class="small-line"></span> NGÀY PHỤ NỮ VIỆT NAM</p>
+        <p class="hero-dedication hero-enter">Dành cho Châu Nhi, cô gái anh thương.</p>
+        <h1 id="hero-title" class="hero-enter">Giữa cả thế giới,<br>anh vẫn<br><em>chọn em.</em><span class="title-star" aria-hidden="true">✧</span></h1>
+        <p class="hero-description hero-enter">Có những điều không cần nói thật lớn.<br>Chỉ cần dành riêng cho đúng một người.</p>
+        <a class="pill-button hero-enter" href="#letter">Có một điều anh muốn nói <span aria-hidden="true">↗</span></a>
+        <p class="hero-signature hero-enter">Minh Trung <span>gửi</span> Châu Nhi <span aria-hidden="true">♡</span></p>
+      </div>
+
+      <div class="hero-art hero-enter" aria-label="Những khung hình của chúng mình">
+        <div class="orbit orbit-one" aria-hidden="true"></div>
+        <div class="orbit orbit-two" aria-hidden="true"></div>
+        <span class="orbit-star star-one" aria-hidden="true">✦</span>
+        <span class="orbit-star star-two" aria-hidden="true">✧</span>
+
+        <figure class="hero-photo main-photo" data-depth="0.65">
+          <img src="img/1792481185509_2232056664166823737_8060787265545151005_e1a65406c19f5067cc180934b43e3d1b.jpg" alt="Một nụ cười thật gần, một khoảnh khắc của hai người" width="960" height="1280" fetchpriority="high">
+          <figcaption>Điều đẹp nhất, là có em.</figcaption>
+        </figure>
+        <figure class="hero-photo satellite satellite-one" data-depth="-0.45">
+          <img src="img/1792481183527_2232056664166823737_8060787265545151005_485444d170c2b68deb02f2d26832808f.jpg" alt="Một tấm ảnh đôi đầy dịu dàng" width="1080" height="1440">
+          <figcaption>us, always.</figcaption>
+        </figure>
+        <figure class="hero-photo satellite satellite-two" data-depth="1">
+          <img src="img/1792481186206_2232056664166823737_8060787265545151005_47ebd1f1567d89302393b18139774e64.jpg" alt="Hai người bên nhau trong một tấm hình kỷ niệm" width="1080" height="1440">
+          <figcaption>you & me ♡</figcaption>
+        </figure>
+
+        <span class="photo-note">my favorite place<br>is next to you.</span>
+        <span class="art-coordinate">10°20′ LOVE · ∞</span>
+      </div>
+
+      <a class="scroll-cue" href="#memories"><span class="scroll-line"></span> CUỘN ĐỂ ĐI QUA NHỮNG ĐIỀU DỊU DÀNG</a>
+      <span class="hero-side-note" aria-hidden="true">A LITTLE UNIVERSE, MADE FOR YOU</span>
+    </section>
+
+    <!-- Romantic Marquee Ribbon -->
+    <div class="love-ribbon" aria-hidden="true">
+      <div>
+        <span>you are my favorite feeling</span><b>✧</b>
+        <span>thế giới của anh, có em</span><b>✧</b>
+        <span>you are my favorite feeling</span><b>✧</b>
+        <span>thế giới của anh, có em</span><b>✧</b>
+      </div>
+    </div>
+
+    <!-- Section 01: Core Memories -->
+    <section class="memories section" id="memories" aria-labelledby="memories-title">
+      <div class="section-top reveal">
+        <span class="eyebrow">01 / NHỮNG ĐIỀU ANH GIỮ LẠI</span>
+        <span class="tiny-label">CHÚNG MÌNH, QUA TỪNG KHUNG HÌNH</span>
+      </div>
+      <div class="memory-heading reveal">
+        <h2 id="memories-title">Bình thường thôi,<br>mà anh muốn giữ <em>mãi.</em></h2>
+        <p>Không cần một ngày thật đặc biệt.<br>Chỉ cần có em, những điều bình thường<br>cũng trở thành điều anh muốn giữ lại.</p>
+      </div>
+
+      <div class="memory-composition">
+        <figure class="memory-photo memory-a reveal">
+          <div class="image-clip">
+            <img src="img/1792481183368_2232056664166823737_8060787265545151005_f3cff90a056d6a95386e636e8e4ca0b6.jpg" alt="Một nụ cười vui vẻ bên nhau" loading="lazy" width="1080" height="1440">
+          </div>
+          <figcaption><span>01 — NỤ CƯỜI CỦA EM</span><i>là ngày anh thấy trời trong.</i></figcaption>
+        </figure>
+
+        <div class="memory-middle">
+          <span class="drawn-heart reveal" aria-hidden="true">♡</span>
+          <p class="memory-quote reveal">“Có em ở cạnh,<br>là đủ <em>ấm áp.</em>”</p>
+          <figure class="memory-photo memory-b reveal">
+            <div class="image-clip">
+              <img src="img/1792481186063_2232056664166823737_8060787265545151005_6cbe74e063128d2eedde345fa59cd2a2.jpg" alt="Đôi bàn tay nắm lấy nhau" loading="lazy" width="960" height="1280">
+            </div>
+            <figcaption><span>02 — MỘT CÁI NẮM TAY</span></figcaption>
+          </figure>
+        </div>
+
+        <figure class="memory-photo memory-c reveal">
+          <div class="image-clip">
+            <img src="img/1792481185895_2232056664166823737_8060787265545151005_a0f923490b515a2935fada2ff0e8f01f.jpg" alt="Một khoảnh khắc yêu thương trong ảnh đôi" loading="lazy" width="960" height="1280">
+          </div>
+          <figcaption><span>03 — NHỮNG ĐIỀU DỊU DÀNG</span><i>chẳng cần phải gọi thành tên.</i></figcaption>
+        </figure>
+      </div>
+
+      <div class="memory-bottom reveal">
+        <span>Không phải vì bức ảnh hoàn hảo.</span>
+        <span>Mà vì trong đó, <em>có chúng mình.</em></span>
+        <span aria-hidden="true">✧</span>
+      </div>
+    </section>
+
+    <!-- Cinematic Video Break -->
+    <section class="cinema section" aria-labelledby="cinema-title">
+      <video id="love-film" class="love-film" muted loop playsinline preload="none" poster="assets/celestial-garden-2k.webp" aria-hidden="true" tabindex="-1">
+        <source src="assets/rose-universe-2k.mp4" type="video/mp4">
+        <source src="assets/rose-universe.mp4" type="video/mp4">
+      </video>
+      <div class="cinema-vignette" aria-hidden="true"></div>
+      <div class="cinema-copy reveal">
+        <span class="eyebrow">MỘT VŨ TRỤ NHỎ, MỘT NGƯỜI DUY NHẤT</span>
+        <span class="cinema-star" aria-hidden="true">✦</span>
+        <h2 id="cinema-title">Nếu yêu thương có hình dáng,<br>anh nghĩ sẽ rất giống <em>em.</em></h2>
+        <p>Nhẹ nhàng. Rực rỡ. Và không thể thay thế.</p>
+        <span class="cinema-coordinate">TRUNG & NHI <span>—</span> WRITTEN IN THE STARS</span>
+      </div>
+    </section>
+
+    <!-- Section 02: Full Gallery (17 Memories) -->
+    <section class="gallery section" id="gallery" aria-labelledby="gallery-title">
+      <div class="section-top reveal">
+        <span class="eyebrow">02 / MIỀN KÝ ỨC CỦA CHÚNG MÌNH</span>
+        <span class="tiny-label">17 KHUNG HÌNH · THẬT NHIỀU THƯƠNG NHỚ</span>
+      </div>
+      <div class="gallery-heading reveal">
+        <h2 id="gallery-title">Mỗi tấm hình,<br>một lần <em>thương thêm.</em></h2>
+        <p>Chạm vào một khung hình<br>để ngắm chúng mình gần hơn. <span aria-hidden="true">↗</span></p>
+      </div>
+
+      <div class="gallery-grid" id="gallery-grid">
+        <button class="gallery-photo reveal" data-photo="0" aria-label="Xem ảnh 1: Một chút bình yên">
+          <span class="gallery-image"><img src="img/1792481183265_2232056664166823737_8060787265545151005_92907e19ca8c59bfb8d7540d0d8c9e8b.jpg" alt="Một chút bình yên — ảnh kỷ niệm 1 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Một chút bình yên</span><span>01</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="1" aria-label="Xem ảnh 2: Nụ cười anh thương">
+          <span class="gallery-image"><img src="img/1792481183368_2232056664166823737_8060787265545151005_f3cff90a056d6a95386e636e8e4ca0b6.jpg" alt="Nụ cười anh thương — ảnh kỷ niệm 2 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Nụ cười anh thương</span><span>02</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="2" aria-label="Xem ảnh 3: Ở cạnh em">
+          <span class="gallery-image"><img src="img/1792481183527_2232056664166823737_8060787265545151005_485444d170c2b68deb02f2d26832808f.jpg" alt="Ở cạnh em — ảnh kỷ niệm 3 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Ở cạnh em</span><span>03</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="3" aria-label="Xem ảnh 4: Thật gần nhau">
+          <span class="gallery-image"><img src="img/1792481183676_2232056664166823737_8060787265545151005_59d279fdf3ebd8e16b217a2e072beabe.jpg" alt="Thật gần nhau — ảnh kỷ niệm 4 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Thật gần nhau</span><span>04</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="4" aria-label="Xem ảnh 5: Chúng mình">
+          <span class="gallery-image"><img src="img/1792481183869_2232056664166823737_8060787265545151005_032eb0ee17dbe2b7c3de226ef44c2750.jpg" alt="Chúng mình — ảnh kỷ niệm 5 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Chúng mình</span><span>05</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="5" aria-label="Xem ảnh 6: Ngày bình thường">
+          <span class="gallery-image"><img src="img/1792481184084_2232056664166823737_8060787265545151005_c843fa8f124b3259de9184dc4257aa69.jpg" alt="Ngày bình thường — ảnh kỷ niệm 6 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Ngày bình thường</span><span>06</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="6" aria-label="Xem ảnh 7: Niềm vui nhỏ">
+          <span class="gallery-image"><img src="img/1792481184345_2232056664166823737_8060787265545151005_3a194a3aa5e6c77da712a33bb8e88b49.jpg" alt="Niềm vui nhỏ — ảnh kỷ niệm 7 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Niềm vui nhỏ</span><span>07</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="7" aria-label="Xem ảnh 8: Có nhau ở đây">
+          <span class="gallery-image"><img src="img/1792481185057_2232056664166823737_8060787265545151005_c8d58e1529f6a1843ee2e45cce4f1d4d.jpg" alt="Có nhau ở đây — ảnh kỷ niệm 8 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Có nhau ở đây</span><span>08</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="8" aria-label="Xem ảnh 9: Thêm một kỷ niệm">
+          <span class="gallery-image"><img src="img/1792481185301_2232056664166823737_8060787265545151005_9107ff99a6c75cff7fc4066df9484425.jpg" alt="Thêm một kỷ niệm — ảnh kỷ niệm 9 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Thêm một kỷ niệm</span><span>09</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="9" aria-label="Xem ảnh 10: Điều dịu dàng">
+          <span class="gallery-image"><img src="img/1792481185509_2232056664166823737_8060787265545151005_e1a65406c19f5067cc180934b43e3d1b.jpg" alt="Điều dịu dàng — ảnh kỷ niệm 10 của hai người" loading="lazy" width="960" height="1280"></span>
+          <span class="photo-label"><span>Điều dịu dàng</span><span>10</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="10" aria-label="Xem ảnh 11: Một chút yêu thương">
+          <span class="gallery-image"><img src="img/1792481185719_2232056664166823737_8060787265545151005_9dfa4deaf32cc17a36dc75a2d21f7658.jpg" alt="Một chút yêu thương — ảnh kỷ niệm 11 của hai người" loading="lazy" width="960" height="1280"></span>
+          <span class="photo-label"><span>Một chút yêu thương</span><span>11</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="11" aria-label="Xem ảnh 12: Giữ lại khoảnh khắc">
+          <span class="gallery-image"><img src="img/1792481185895_2232056664166823737_8060787265545151005_a0f923490b515a2935fada2ff0e8f01f.jpg" alt="Giữ lại khoảnh khắc — ảnh kỷ niệm 12 của hai người" loading="lazy" width="960" height="1280"></span>
+          <span class="photo-label"><span>Giữ lại khoảnh khắc</span><span>12</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="12" aria-label="Xem ảnh 13: Nắm tay thật lâu">
+          <span class="gallery-image"><img src="img/1792481186063_2232056664166823737_8060787265545151005_6cbe74e063128d2eedde345fa59cd2a2.jpg" alt="Nắm tay thật lâu — ảnh kỷ niệm 13 của hai người" loading="lazy" width="960" height="1280"></span>
+          <span class="photo-label"><span>Nắm tay thật lâu</span><span>13</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="13" aria-label="Xem ảnh 14: Em và anh">
+          <span class="gallery-image"><img src="img/1792481186206_2232056664166823737_8060787265545151005_47ebd1f1567d89302393b18139774e64.jpg" alt="Em và anh — ảnh kỷ niệm 14 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Em và anh</span><span>14</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="14" aria-label="Xem ảnh 15: Mình bên nhau">
+          <span class="gallery-image"><img src="img/1792481186410_2232056664166823737_8060787265545151005_974a57b36e7d9371251675fdd681acdd.jpg" alt="Mình bên nhau — ảnh kỷ niệm 15 của hai người" loading="lazy" width="1080" height="1440"></span>
+          <span class="photo-label"><span>Mình bên nhau</span><span>15</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="15" aria-label="Xem ảnh 16: Như một thước phim">
+          <span class="gallery-image"><img src="img/1792481186690_2232056664166823737_8060787265545151005_98c677a392717c513bcc8fd951df7dea.jpg" alt="Như một thước phim — ảnh kỷ niệm 16 của hai người" loading="lazy" width="1080" height="1920"></span>
+          <span class="photo-label"><span>Như một thước phim</span><span>16</span></span>
+        </button>
+        <button class="gallery-photo reveal" data-photo="16" aria-label="Xem ảnh 17: Một giấc mơ đẹp">
+          <span class="gallery-image"><img src="img/1792481186993_2232056664166823737_8060787265545151005_577205adfe38e8198775d26c950c23f6.jpg" alt="Một giấc mơ đẹp — ảnh kỷ niệm 17 của hai người" loading="lazy" width="1080" height="1920"></span>
+          <span class="photo-label"><span>Một giấc mơ đẹp</span><span>17</span></span>
+        </button>
+      </div>
+
+      <p class="gallery-end reveal">Một vài khoảnh khắc đã qua. <span>Và còn thật nhiều điều đẹp đẽ ở phía trước.</span> ♡</p>
+    </section>
+
+    <!-- Section 03: The Love Letter -->
+    <section class="letter-section section" id="letter" aria-labelledby="letter-title">
+      <div class="letter-margin" aria-hidden="true">SOME WORDS, JUST FOR YOU.</div>
+      <div class="letter-heading reveal">
+        <span class="eyebrow">03 / ĐIỀU ANH MUỐN NÓI</span>
+        <span class="letter-heart" aria-hidden="true">♡</span>
+        <h2 id="letter-title">Nhi à,<br><em>anh có vài lời.</em></h2>
+        <p>Không cần hoa mỹ. Chỉ cần thật lòng.</p>
+      </div>
+
+      <article class="letter-paper" aria-label="Thư của Minh Trung gửi Châu Nhi">
+        <div class="letter-date reveal">
+          <span>DÀNH RIÊNG CHO EM</span>
+          <time datetime="2026-10-20">20 tháng 10, 2026</time>
+        </div>
+        <p class="salutation reveal">Châu Nhi của anh,</p>
+        <p class="reveal">Có những điều anh không phải lúc nào cũng nói thật khéo. Nhưng hôm nay, anh muốn em biết rằng: <strong>có em trong cuộc đời là một điều anh luôn trân trọng.</strong></p>
+        <p class="reveal">Cảm ơn em vì những nụ cười, những lần ở cạnh nhau, và cả những khoảnh khắc rất bình thường mà khi nhìn lại, anh chỉ muốn giữ mãi.</p>
+        <p class="reveal">Ngày 20/10, anh chúc em luôn khỏe mạnh, bình an, được làm điều mình thích và được yêu thương theo cách khiến em thấy hạnh phúc. Mong em luôn giữ được ánh sáng của riêng mình, và luôn biết rằng em xứng đáng với những điều dịu dàng nhất.</p>
+        <blockquote class="reveal">
+          “Anh không chỉ muốn chúc em vui trong hôm nay.<br>
+          <em>Anh muốn cùng em góp nhặt thêm thật nhiều ngày vui ở phía trước.</em>”
+        </blockquote>
+        <p class="reveal">Bằng sự quan tâm, lắng nghe và những điều nhỏ bé mỗi ngày. Bằng một cái nắm tay khi em cần. Bằng việc luôn nhớ rằng, yêu thương cũng cần được thể hiện qua những điều bình thường nhất.</p>
+        <p class="reveal">Chúc mừng Ngày Phụ nữ Việt Nam,<br><strong>cô gái anh thương.</strong></p>
+
+        <div class="letter-signature reveal">
+          <span>Thương em,</span>
+          <span class="signature-name">Minh Trung</span>
+          <span class="signature-full">TRẦN LÊ MINH TRUNG</span>
+          <span class="signature-heart" aria-hidden="true">♡</span>
+        </div>
+      </article>
+
+      <div class="letter-footnote reveal">MỘT LÁ THƯ NHỎ <span>✧</span> GỬI MỘT NGƯỜI RẤT ĐẶC BIỆT</div>
+    </section>
+
+    <!-- Section 04: Forever & Interactive Hug -->
+    <section class="forever section" id="forever" aria-labelledby="forever-title">
+      <div class="forever-orbit" aria-hidden="true"></div>
+      <div class="forever-image reveal">
+        <img src="img/1792481186063_2232056664166823737_8060787265545151005_6cbe74e063128d2eedde345fa59cd2a2.jpg" alt="Một cái nắm tay để giữ lại những điều quý giá" width="960" height="1280" loading="lazy">
+      </div>
+      <div class="forever-copy reveal">
+        <span class="eyebrow">04 / HÔM NAY, VÀ NHỮNG NGÀY SAU NỮA</span>
+        <h2 id="forever-title">Nếu được chọn lại,<br>anh vẫn muốn <em>gặp em.</em></h2>
+        <p>Giữa muôn vàn điều có thể thay đổi,<br>mong chúng mình vẫn chọn dịu dàng với nhau.</p>
+        <button class="hug-button" id="hug-button">
+          <span class="hug-heart" aria-hidden="true">♡</span>
+          <span>Nhận một cái ôm từ anh</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+        <p id="final-message" aria-live="polite" class="final-message">Một điều bất ngờ nho nhỏ, đang chờ em.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <a class="footer-mark" href="#home" aria-label="Trở lại đầu trang">T <span>♡</span> N</a>
+    <p>
+      Dành riêng cho <strong>Nguyễn Hoàng Châu Nhi</strong>
+      <span>Được làm bằng tất cả yêu thương của Trần Lê Minh Trung.</span>
+    </p>
+    <span class="footer-date">20.10.2026<br><em>our little universe.</em></span>
+  </footer>
+
+  <!-- Floating Audio Controls & Status Notice -->
+  <button class="sound-button" id="sound-toggle" aria-pressed="false" aria-label="Bật hoặc tắt nhạc và âm thanh ASMR">
+    <span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span id="sound-label">Bật nhạc & ASMR</span>
+  </button>
+  <div class="sound-notice" id="sound-notice" role="status"></div>
+
+  <!-- High-Res Photo Lightbox Dialog -->
+  <dialog id="photo-dialog" aria-labelledby="photo-caption">
+    <div class="viewer-top">
+      <p id="photo-caption">Ký ức của chúng mình</p>
+      <button id="photo-close" class="icon-button" aria-label="Đóng ảnh">✕</button>
+    </div>
+    <div class="viewer-frame">
+      <img id="viewer-image" alt="">
+      <p id="photo-error" hidden>Ảnh chưa tải được. Em thử chuyển sang khung hình tiếp theo nhé.</p>
+    </div>
+    <div class="viewer-bottom">
+      <button id="photo-prev" class="icon-button" aria-label="Ảnh trước">←</button>
+      <span id="photo-count" aria-live="polite"></span>
+      <button id="photo-next" class="icon-button" aria-label="Ảnh tiếp theo">→</button>
+    </div>
+  </dialog>
+
+  <noscript>
+    <style>
+      #welcome { display: none; }
+      .reveal { opacity: 1!important; transform: none!important; }
+    </style>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,200 @@
+{
+  "service": "Local G-Labs Webhook",
+  "created": "2026-10-20",
+  "prompts": [
+    {
+      "name": "celestial-garden",
+      "endpoint": "image",
+      "body": {
+        "model": "nano_banana_2",
+        "aspect_ratio": "16:9",
+        "prompt": "Use case: stylized-concept. Asset: cinematic romantic website background, widescreen. A breathtaking fine art macro photograph of a few dusty blush rose petals drifting in a midnight burgundy universe, champagne stardust forming an elegant very thin orbital arc, beautiful soft anamorphic light, dreamy dark atmosphere, deep black-plum negative space across the center and left for readable website text, restrained blush pink highlights at the right edge, tactile film grain, exquisite editorial luxury, ethereal and romantic, no people, no letters, no text, no logos. The background must stay dark and quiet, not a busy galaxy."
+      }
+    },
+    {
+      "name": "love-emblem",
+      "endpoint": "image",
+      "body": {
+        "model": "nano_banana_2",
+        "aspect_ratio": "1:1",
+        "prompt": "Use case: logo-brand. Asset: small romantic monogram logo and favicon for a private love letter website. One exquisite minimalist interlocking T and N monogram joined by a fine heart-shaped orbital line, polished pale champagne gold foil on perfectly solid nearly black burgundy background #100c10. The only letters are T and N, large and legible, refined classical serif, beautifully balanced with a tiny four-point star above. Square composition with generous empty margin, emblem centered, elegant premium wedding stationery identity, flat front view, no mockup, no objects, no extra words, no frame."
+      }
+    },
+    {
+      "name": "rose-universe",
+      "endpoint": "video",
+      "body": {
+        "model": "veo_31_fast",
+        "mode": "text_to_video",
+        "aspect_ratio": "16:9",
+        "resolution": [
+          "720p"
+        ],
+        "video_length": 8,
+        "prompt": "Cinematic luxury romantic website background, one continuous eight-second shot. On an almost black burgundy velvet universe, a handful of delicate pale blush rose petals float in extreme slow motion through fine champagne gold dust. A thin luminous arc traces a subtle heart-shaped orbit, gently dissolving into starlight. Locked camera with imperceptible forward drift, beautifully shallow depth of field, soft anamorphic light, center and left mostly empty and dark for text overlay. Ethereal and intimate, expensive fine art film, subtle movement suitable for seamless looping. No people, no letters, no text, no logos, no rapid flashes, no cuts, no speech, silent."
+      }
+    }
+  ],
+  "jobs": [
+    {
+      "name": "celestial-garden",
+      "taskId": "0d558e70",
+      "type": "image",
+      "status": "completed",
+      "file": "assets/celestial-garden.jpg"
+    },
+    {
+      "name": "love-emblem",
+      "taskId": "68ed1393",
+      "type": "image",
+      "status": "completed",
+      "file": "assets/love-emblem.jpg"
+    },
+    {
+      "name": "rose-universe",
+      "taskId": "5a37c41a",
+      "type": "video",
+      "status": "completed",
+      "file": "assets/rose-universe.mp4"
+    },
+    {
+      "name": "celestial-garden-2k",
+      "taskId": "98254e8f",
+      "type": "upscale",
+      "status": "completed",
+      "file": "assets/celestial-garden-2k.webp"
+    },
+    {
+      "name": "love-emblem-2k",
+      "taskId": "8eb9d7da",
+      "type": "upscale",
+      "status": "completed",
+      "file": "assets/love-emblem-2k.webp"
+    },
+    {
+      "name": "rose-universe-4k",
+      "taskId": "3a573f93",
+      "type": "video",
+      "status": "failed"
+    },
+    {
+      "name": "photo-01-2k",
+      "taskId": "a43edfde",
+      "type": "upscale",
+      "status": "running",
+      "original": "img/1792481183265_2232056664166823737_8060787265545151005_92907e19ca8c59bfb8d7540d0d8c9e8b.jpg"
+    },
+    {
+      "name": "photo-02-2k",
+      "taskId": "415ae2d9",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481183368_2232056664166823737_8060787265545151005_f3cff90a056d6a95386e636e8e4ca0b6.jpg"
+    },
+    {
+      "name": "photo-03-2k",
+      "taskId": "a65e3042",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481183527_2232056664166823737_8060787265545151005_485444d170c2b68deb02f2d26832808f.jpg"
+    },
+    {
+      "name": "photo-04-2k",
+      "taskId": "b7f978e3",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481183676_2232056664166823737_8060787265545151005_59d279fdf3ebd8e16b217a2e072beabe.jpg"
+    },
+    {
+      "name": "photo-05-2k",
+      "taskId": "9ce533cf",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481183869_2232056664166823737_8060787265545151005_032eb0ee17dbe2b7c3de226ef44c2750.jpg"
+    },
+    {
+      "name": "photo-06-2k",
+      "taskId": "bc89c7e4",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481184084_2232056664166823737_8060787265545151005_c843fa8f124b3259de9184dc4257aa69.jpg"
+    },
+    {
+      "name": "photo-07-2k",
+      "taskId": "a174b38e",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481184345_2232056664166823737_8060787265545151005_3a194a3aa5e6c77da712a33bb8e88b49.jpg"
+    },
+    {
+      "name": "photo-08-2k",
+      "taskId": "1ff7a102",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481185057_2232056664166823737_8060787265545151005_c8d58e1529f6a1843ee2e45cce4f1d4d.jpg"
+    },
+    {
+      "name": "photo-09-2k",
+      "taskId": "3e0ce828",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481185301_2232056664166823737_8060787265545151005_9107ff99a6c75cff7fc4066df9484425.jpg"
+    },
+    {
+      "name": "photo-10-2k",
+      "taskId": "11b7230b",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481185509_2232056664166823737_8060787265545151005_e1a65406c19f5067cc180934b43e3d1b.jpg"
+    },
+    {
+      "name": "photo-11-2k",
+      "taskId": "63a01428",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481185719_2232056664166823737_8060787265545151005_9dfa4deaf32cc17a36dc75a2d21f7658.jpg"
+    },
+    {
+      "name": "photo-12-2k",
+      "taskId": "1dc621b3",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481185895_2232056664166823737_8060787265545151005_a0f923490b515a2935fada2ff0e8f01f.jpg"
+    },
+    {
+      "name": "photo-13-2k",
+      "taskId": "d8d17654",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481186063_2232056664166823737_8060787265545151005_6cbe74e063128d2eedde345fa59cd2a2.jpg"
+    },
+    {
+      "name": "photo-14-2k",
+      "taskId": "64e42bb7",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481186206_2232056664166823737_8060787265545151005_47ebd1f1567d89302393b18139774e64.jpg"
+    },
+    {
+      "name": "photo-15-2k",
+      "taskId": "8cbd43c9",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481186410_2232056664166823737_8060787265545151005_974a57b36e7d9371251675fdd681acdd.jpg"
+    },
+    {
+      "name": "photo-16-2k",
+      "taskId": "394738d7",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481186690_2232056664166823737_8060787265545151005_98c677a392717c513bcc8fd951df7dea.jpg"
+    },
+    {
+      "name": "photo-17-2k",
+      "taskId": "7d61b879",
+      "type": "upscale",
+      "status": "pending",
+      "original": "img/1792481186993_2232056664166823737_8060787265545151005_577205adfe38e8198775d26c950c23f6.jpg"
+    }
+  ]
+}

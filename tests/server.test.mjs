@@ -1,0 +1,31 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readdir } from 'node:fs/promises';
+
+test('preview serves only public assets and supports video byte ranges', async t => {
+  const { createPreviewServer } = await import('../server.mjs');
+  const server = createPreviewServer();
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => { server.closeAllConnections(); return new Promise(resolve => server.close(resolve)); });
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const page = await fetch(base);
+  assert.equal(page.status, 200);
+  assert.match(page.headers.get('content-type'), /text\/html/);
+  assert.match(await page.text(), /Nguyễn Hoàng Châu Nhi/);
+  const firstPhoto = (await readdir(new URL('../img/', import.meta.url))).sort()[0];
+  const photo = await fetch(`${base}/img/${firstPhoto}`);
+  assert.equal(photo.status, 200);
+  assert.match(photo.headers.get('content-type'), /image\/jpeg/);
+  await photo.arrayBuffer();
+  for (const path of ['/missing.jpg', '/docs/assets/generation.json', '/.git/config', '/package.json', '/img/%2e%2e%2fpackage.json', '/assets/%5c..%5cpackage.json']) assert.ok([400,403,404].includes((await fetch(base + path)).status), path);
+  assert.equal((await fetch(`${base}/bad%ZZ`)).status, 400);
+  const head = await fetch(base, { method: 'HEAD' });
+  assert.equal(head.status, 200);
+  assert.equal(await head.text(), '');
+  assert.equal((await fetch(base, { method: 'POST' })).status, 405);
+  const clip = await fetch(`${base}/assets/rose-universe.mp4`, { headers: { Range: 'bytes=0-31' } });
+  assert.equal(clip.status, 206);
+  assert.equal((await clip.arrayBuffer()).byteLength, 32);
+  assert.match(clip.headers.get('content-range'), /^bytes 0-31\//);
+  assert.equal((await fetch(`${base}/assets/rose-universe.mp4`, { headers: { Range: 'bytes=999999999999-' } })).status, 416);
+});
