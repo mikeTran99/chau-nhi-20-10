@@ -341,18 +341,29 @@ main h1 em, main h2 em, .hero-content em, .cinema h2 em {
   50% { background-position: 0% 50%; }
 }
 
-/* 8. AE 3D Perspective & GPU Acceleration */
+/* 8. AE 3D Perspective & Hardware Rendering */
 main section figure,
-main section h1,
-main section h2,
-main section video,
-main article,
 .hero-photo,
-.memory-card,
-.gallery-photo {
-  will-change: transform, opacity, clip-path, filter;
+.memory-card {
   transform-style: preserve-3d;
-  perspective: 1000px;
+}
+
+/* Flash portal & Surprise glow */
+.ae-portal-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(circle at center, rgba(255, 245, 228, 0.92) 0%, rgba(255, 215, 200, 0.4) 45%, transparent 80%);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+.ae-surprise-glow {
+  animation: aeHeartPulse 2.4s ease-in-out infinite;
+}
+@keyframes aeHeartPulse {
+  0%, 100% { filter: drop-shadow(0 0 18px rgba(255, 182, 193, 0.35)); }
+  50% { filter: drop-shadow(0 0 38px rgba(255, 215, 180, 0.75)); }
 }
 
 main figure img, .gallery-image img {
@@ -465,6 +476,8 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
   background: var(--ink);
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
@@ -1966,7 +1979,16 @@ dialog::backdrop {
   isolation: isolate;
   color: #fdfbf7 !important;
 }
-#welcome[open] { display: grid; place-items: center; }
+#welcome[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100dvh;
+}
+.welcome-content {
+  margin: auto 0;
+}
 
 .welcome-sky {
   position: absolute;
@@ -2401,109 +2423,649 @@ dialog::backdrop {
 
 @media (max-width: 900px) {
   .site-header { padding: 18px 4%; }
-  .site-header nav { display: none; } /* On tablets, clean up header to keep prominent actions */
+  .site-header nav { display: none; }
 }
 
+/* ==========================================================================
+   TABLET & SMALL LAPTOP (≤ 760px) — Full Mobile Responsive
+   ========================================================================== */
 @media (max-width: 760px) {
   html { scroll-padding-top: 25px; }
-  .section { padding-left: 6.5%; padding-right: 6.5%; }
-  .site-header { padding: 16px 5%; gap: 10px; }
-  .brand-label { display: none; }
-  .brand-ai { width: 46px; height: 46px; }
+  body { font-size: 14px; }
+  .section { padding-left: 5.5%; padding-right: 5.5%; }
 
-  /* Compact round mobile action buttons (44x44px touch targets for Vivo & iPhone) */
-  .header-actions { gap: 8px; }
+  /* Mobile GPU VRAM optimization: avoid dozens of forced 3D compositing layers */
+  main section figure,
+  main section h1,
+  main section h2,
+  main section video,
+  main article,
+  .gallery-photo {
+    will-change: auto;
+    perspective: none;
+    transform-style: flat;
+  }
+
+  h2 { font-size: clamp(30px, 7.5vw, 48px); }
+
+  /* ─── Header: Compact, Touch-Friendly ─── */
+  .site-header {
+    padding: 12px 4.5%;
+    gap: 8px;
+    background: rgba(16, 38, 31, 0.92);
+  }
+  .brand-label { display: none; }
+  .brand-ai { width: 42px; height: 42px; }
+  .brand { gap: 10px; }
+
+  .header-actions { gap: 6px; }
   .theme-button {
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
     padding: 0;
     justify-content: center;
     border-radius: 50%;
   }
   .theme-button .theme-label { display: none; }
-  .theme-button .theme-icon { font-size: 20px; line-height: 1; }
+  .theme-button .theme-icon { font-size: 18px; line-height: 1; }
 
   .motion-button {
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
     padding: 0;
     justify-content: center;
     border-radius: 50%;
   }
   .motion-label { display: none; }
 
+  /* ─── Hero: Stack vertically, breathe properly ─── */
   .hero {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding-top: 130px;
-    padding-bottom: 85px;
+    padding-top: 105px;
+    padding-bottom: 65px;
     min-height: auto;
+    gap: 20px;
+  }
+  .hero-atmosphere {
+    background: linear-gradient(180deg, #07261e 0%, rgba(13, 54, 44, 0.92) 40%, rgba(13, 54, 44, 0.45) 100%),
+                url('assets/ghibli-garden-2k.webp') center/cover;
+  }
+  .hero:after {
+    background: linear-gradient(0deg, var(--ink) 0%, transparent 25%),
+                radial-gradient(ellipse at 50% 60%, rgba(85, 239, 196, 0.12) 0%, transparent 65%);
+  }
+
+  .hero .eyebrow { font-size: 9px; letter-spacing: 0.18em; gap: 8px; }
+  .small-line { width: 22px; }
+  .hero-dedication { font-size: 16px; margin-top: 20px; margin-bottom: 12px; }
+  .hero h1 {
+    font-size: clamp(36px, 9vw, 52px);
+    max-width: none;
+    line-height: 1.18;
+  }
+  .title-star { font-size: 22px; margin: 6px 0 0 8px; }
+  .hero-description {
+    font-size: 13px;
+    line-height: 1.85;
+    margin-top: 18px;
+    max-width: none;
+  }
+  .pill-button {
+    padding: 14px 22px;
+    font-size: 11px;
+    margin-top: 22px;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+  .pill-button span { font-size: 18px; }
+  .hero-signature {
+    font-size: 15px;
+    margin-top: 22px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-signature span:last-child { font-size: 20px; }
+
+  /* Hero Art: Compact photo composition that fits mobile screens */
+  .hero-art {
+    width: 88%;
+    height: 380px;
+    margin: 8px auto 0;
+    max-width: 400px;
+    order: -1; /* Photos first on mobile for impact */
+  }
+  .main-photo {
+    height: 280px;
+    width: 62%;
+    top: 30px;
+    left: 19%;
+    padding: 6px 6px 26px;
+  }
+  .main-photo img { border-radius: 120px 120px 4px 4px; }
+  .main-photo { border-radius: 126px 126px 10px 10px; }
+  .satellite-one {
+    height: 150px;
+    width: 30%;
+    left: 0%;
+    top: 5px;
+    padding: 5px 5px 22px;
+  }
+  .satellite-two {
+    height: 155px;
+    width: 32%;
+    right: 0%;
+    bottom: 15px;
+    padding: 5px 5px 22px;
+  }
+  .hero-photo { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 210, 132, 0.2); }
+  .hero-photo figcaption { font-size: 10px; bottom: 5px; }
+  .orbit { border-width: 1px; opacity: 0.6; }
+  .orbit-star { font-size: 24px; }
+  .star-one { font-size: 26px; }
+  .star-two { font-size: 30px; }
+  .photo-note { font-size: 13px; right: -2%; top: 5px; }
+  .art-coordinate { font-size: 8px; bottom: 8px; left: 28%; }
+  .scroll-cue {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 12px;
+    justify-content: center;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    gap: 10px;
+    opacity: 0.7;
+  }
+  .scroll-line { height: 28px; }
+  .hero-side-note { display: none; }
+
+  /* ─── Love Ribbon ─── */
+  .love-ribbon { padding: 14px 0; }
+  .love-ribbon span { font-size: 20px; }
+  .love-ribbon b { font-size: 18px; }
+  .love-ribbon > div { gap: 28px; }
+
+  /* ─── Memories (Ch01): Clean single-column flow ─── */
+  .memories, .gallery { padding-top: 60px; padding-bottom: 60px; }
+  .section-top { flex-direction: column; align-items: flex-start; gap: 6px; padding-bottom: 20px; }
+  .eyebrow { font-size: 9px; letter-spacing: 0.18em; }
+  .tiny-label { font-size: 8px; }
+
+  .memory-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 28px 0 32px;
+  }
+  .memory-heading h2 { font-size: clamp(30px, 8vw, 42px); }
+  .memory-heading p { font-size: 13px; line-height: 1.9; max-width: none; }
+
+  .memory-composition {
+    grid-template-columns: 1fr;
     gap: 28px;
   }
-  .hero h1 { font-size: clamp(46px, 9.5vw, 72px); }
-  .hero-description { font-size: 13px; }
-  .hero-art { width: 94%; height: 450px; margin: 12px auto; max-width: 460px; }
-  .main-photo { height: 340px; width: 66%; top: 38px; left: 17%; }
-  .satellite-one { height: 175px; width: 32%; left: -2%; top: 0; }
-  .satellite-two { height: 185px; width: 34%; right: -2%; bottom: 0; }
+  .memory-a, .memory-c { transform: none; }
+  .memory-c { margin-top: 0; }
+  .memory-a .image-clip { aspect-ratio: 0.85; border-radius: 80px 80px 10px 10px; }
 
-  .love-ribbon { padding: 18px 0; }
-  .love-ribbon span { font-size: 24px; }
-  .love-ribbon > div { gap: 35px; }
+  .memory-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .drawn-heart { font-size: 52px; margin: 0 0 16px; }
+  .memory-quote {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    padding: 0 8px;
+  }
+  .memory-b .image-clip { aspect-ratio: 0.85; }
 
-  .memories, .gallery { padding-top: 70px; padding-bottom: 70px; }
-  .memory-heading { display: block; margin: 35px 0 40px; }
-  .memory-heading h2 { font-size: 42px; }
-  .memory-composition { grid-template-columns: 1fr 1fr; gap: 25px 18px; }
-  .memory-a { transform: rotate(-3deg); }
-  .memory-middle { display: contents; }
-  .drawn-heart { display: none; }
-  .memory-quote { grid-column: 2; grid-row: 1; font-size: 22px; padding-top: 35px; }
-  .memory-b { grid-column: 1; grid-row: 2; width: 90%; margin: 15px auto 0; }
-  .memory-c { grid-column: 2; grid-row: 1 / span 2; margin-top: 160px; width: 100%; }
+  .memory-photo {
+    padding: 8px;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), 0 0 18px rgba(0, 210, 132, 0.15);
+  }
+  .memory-photo figcaption { margin-top: 14px; }
+  .memory-photo figcaption span { font-size: 8px; }
+  .memory-photo figcaption i { font-size: 14px; }
 
-  .cinema { min-height: 520px; padding-top: 80px; padding-bottom: 80px; }
-  .cinema h2 { font-size: 38px; }
+  .memory-bottom {
+    margin-top: 45px;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .memory-bottom span:last-child { margin-left: 0; }
+  .memory-bottom em { font-size: 16px; }
 
-  .gallery-heading { display: block; margin: 35px 0; }
-  .gallery-heading h2 { font-size: 42px; }
-  .gallery-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 12px; }
-  .gallery-photo:nth-child(4n+2), .gallery-photo:nth-child(4n+4) { margin-top: 0; }
-  .gallery-photo:nth-child(3n+2) { margin-top: 20px; }
+  /* ─── Cinema: Full-width immersive ─── */
+  .cinema {
+    min-height: 420px;
+    padding-top: 65px;
+    padding-bottom: 65px;
+  }
+  .cinema h2 { font-size: clamp(28px, 7vw, 40px); line-height: 1.35; }
+  .cinema-star { font-size: 28px; margin: 18px 0; }
+  .cinema-copy > p { font-size: 13px; margin-top: 18px; }
+  .cinema-coordinate {
+    font-size: 8px;
+    margin-top: 28px;
+    padding: 6px 16px;
+    letter-spacing: 0.22em;
+  }
+  .cinema-coordinate span { margin: 0 8px; }
 
-  .letter-section { padding-top: 70px; padding-bottom: 50px; }
-  .letter-heading h2 { font-size: 48px; }
-  .letter-paper { padding: 35px 25px; margin-top: 35px; }
-  .letter-paper blockquote { font-size: 22px; margin: 30px -10px; padding: 25px 15px; }
-  .signature-name { font-size: 44px; }
-  .signature-heart { font-size: 75px; right: 10px; }
+  /* ─── Gallery (Ch02): 2-column masonry on mobile ─── */
+  .gallery-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 28px 0;
+  }
+  .gallery-heading h2 { font-size: clamp(30px, 8vw, 42px); }
+  .gallery-heading > p { font-size: 12px; max-width: none; }
+  .gallery-heading > p span { font-size: 18px; margin-left: 6px; }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 10px;
+  }
+  .gallery-photo:nth-child(5n+2),
+  .gallery-photo:nth-child(5n+4),
+  .gallery-photo:nth-child(4n+2),
+  .gallery-photo:nth-child(4n+4),
+  .gallery-photo:nth-child(3n+2) { margin-top: 0; }
+  .gallery-photo:nth-child(2n) { margin-top: 16px; }
+
+  .gallery-image {
+    border-radius: 10px;
+    border-width: 1px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 210, 132, 0.1);
+  }
+  .gallery-image:after {
+    width: 28px;
+    height: 28px;
+    right: 8px;
+    bottom: 8px;
+    font-size: 12px;
+  }
+  .gallery-photo .photo-label {
+    font-size: 9px;
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  [data-theme="ghibli"] .gallery-photo .gallery-image::before {
+    width: 28px;
+    height: 10px;
+    top: -4px;
+    right: 12px;
+  }
+
+  .gallery-end {
+    margin-top: 45px;
+    font-size: 18px;
+  }
+  .gallery-end span { font-size: 12px; margin: 8px 0 10px; }
+
+  /* ─── Letter (Ch03): Readable, elegant on mobile ─── */
+  .letter-section { padding-top: 55px; padding-bottom: 40px; }
+  .letter-heading h2 { font-size: clamp(32px, 8vw, 48px); }
+  .letter-heading > p { font-size: 12px; margin-top: 14px; }
+  .letter-heart { font-size: 48px; margin: 16px 0 10px; }
+
+  .letter-paper {
+    padding: 28px 20px;
+    margin-top: 28px;
+    border-radius: 16px;
+  }
+  .letter-date { font-size: 9px; padding: 14px 0; letter-spacing: 0.14em; }
+  .letter-paper > p {
+    font-size: 14px;
+    line-height: 2;
+    margin-top: 22px;
+  }
+  .letter-paper > .salutation {
+    font-size: 26px;
+    margin-top: 28px;
+  }
+  .letter-paper blockquote {
+    font-size: 18px;
+    line-height: 1.65;
+    margin: 24px -6px;
+    padding: 22px 14px;
+  }
+  .signature-name { font-size: 38px; }
+  .signature-full { font-size: 8px; letter-spacing: 0.2em; }
+  .signature-heart { font-size: 60px; right: 5px; }
   .letter-margin { display: none; }
 
-  .forever { display: flex; flex-direction: column; padding-top: 75px; padding-bottom: 70px; gap: 45px; }
-  .forever-image { width: 60%; max-width: 270px; }
-  .forever-copy { text-align: center; }
-  .forever-copy h2 { font-size: 40px; }
-  .hug-button { margin: 28px auto 0; }
+  .letter-footnote {
+    margin-top: 40px;
+    font-size: 9px;
+    gap: 12px;
+    letter-spacing: 0.14em;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .letter-footnote span { font-size: 18px; }
 
-  footer { padding: 35px 6% 95px; flex-wrap: wrap; gap: 20px; }
-  footer > p { order: 3; width: 100%; text-align: left; }
-  .footer-date { margin-left: auto; }
+  /* ─── Forever (Ch04): Centered, emotional ─── */
+  .forever {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 65px;
+    padding-bottom: 60px;
+    gap: 35px;
+    min-height: auto;
+  }
+  .forever-orbit { display: none; }
+  .forever-image {
+    width: 55%;
+    max-width: 240px;
+    padding: 8px;
+    border-radius: 140px 140px 12px 12px;
+  }
+  .forever-image img { border-radius: 132px 132px 6px 6px; }
+  .forever-copy {
+    text-align: center;
+    width: 100%;
+  }
+  .forever-copy .eyebrow { justify-content: center; }
+  .forever-copy h2 { font-size: clamp(30px, 7.5vw, 40px); }
+  .forever-copy > p:not(.final-message) { font-size: 13px; line-height: 1.85; margin-top: 18px; }
+  .hug-button {
+    margin: 22px auto 0;
+    padding: 13px 22px;
+    font-size: 12px;
+    gap: 14px;
+    min-height: 52px;
+  }
+  .hug-heart { font-size: 26px; }
+  .hug-button > span:last-child { font-size: 18px; }
+  .final-message {
+    font-size: 15px;
+    margin-top: 18px;
+    max-width: none;
+    text-align: center;
+  }
 
-  .sound-button { left: 16px; bottom: max(16px, env(safe-area-inset-bottom, 16px)); padding: 11px 16px; font-size: 10px; }
-  .sound-notice { left: 16px; bottom: 75px; }
-  .envelope { width: 220px; height: 145px; margin-top: 40px; }
-  .envelope-letter { width: 195px; height: 120px; top: 14px; left: 12px; }
-  .wax-seal { left: 88px; top: 54px; }
-  .opening .envelope-letter { transform: translateY(-30px); }
+  /* ─── Footer ─── */
+  footer {
+    padding: 28px 5.5% max(85px, calc(75px + env(safe-area-inset-bottom, 0px)));
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+  footer > p { order: initial; width: 100%; text-align: center; }
+  .footer-mark { font-size: 28px; }
+  .footer-mark span { font-size: 24px; }
+  .footer-date { text-align: center; margin-left: 0; }
+
+  /* ─── Sound Button: Pill on mobile, no text overflow ─── */
+  .sound-button {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: max(14px, env(safe-area-inset-bottom, 14px));
+    padding: 10px 16px;
+    font-size: 10px;
+    max-width: calc(100% - 32px);
+  }
+  .sound-button:hover { transform: translateX(-50%) translateY(-2px); }
+  #sound-label { 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+  .sound-notice {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(max(14px, env(safe-area-inset-bottom, 14px)) + 54px);
+    max-width: calc(100% - 32px);
+    text-align: center;
+  }
+
+  /* ─── Welcome Dialog: Perfect fit for phones ─── */
+  #welcome {
+    padding: max(16px, env(safe-area-inset-top, 16px)) 16px max(16px, env(safe-area-inset-bottom, 16px));
+  }
+  .welcome-content {
+    max-width: 100%;
+    padding: 20px 8px;
+  }
+  .welcome-content > .eyebrow {
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+  .welcome-star { font-size: 26px; margin: 14px 0 8px; }
+  .welcome-to { font-size: 18px; margin: 14px 0; }
+  .welcome-content h2 {
+    font-size: clamp(26px, 7vw, 42px);
+    line-height: 1.3;
+  }
+
+  .envelope {
+    width: 200px;
+    height: 132px;
+    margin: 30px auto 18px;
+  }
+  .envelope-letter {
+    width: 175px;
+    height: 108px;
+    top: 12px;
+    left: 12px;
+    padding: 10px 10px 6px;
+  }
+  .envelope-letter .letter-greeting { font-size: 18px; }
+  .envelope-letter .letter-snippet { font-size: 9px; }
+  .envelope-letter .letter-stamp { font-size: 12px; }
+  .wax-seal {
+    width: 40px;
+    height: 40px;
+    left: 80px;
+    top: 48px;
+    font-size: 16px;
+  }
+  .opening .envelope-letter { transform: translateY(-26px); }
+  .open-caption { font-size: 11px; }
+  .text-button { font-size: 11px; margin-top: 10px; min-height: 40px; }
+  .welcome-from { font-size: 14px; margin-top: 18px; }
+  .corner-note { font-size: 7.5px; left: 12px; bottom: 16px; letter-spacing: 0.2em; }
+
+  /* ─── Photo Lightbox: Full-screen on mobile ─── */
+  #photo-dialog {
+    padding: 12px 10px;
+    width: 100%;
+  }
+  .viewer-top { height: 48px; gap: 12px; }
+  .viewer-top p { font-size: 16px; }
+  .viewer-frame img {
+    max-height: calc(100dvh - 130px);
+    border-radius: 8px;
+  }
+  .viewer-bottom { height: 52px; width: 200px; }
+  .icon-button {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+  #photo-count { font-size: 12px; }
+
+  /* ─── Motion & Cursor: Disable on touch devices ─── */
+  .pointer-glow { display: none; }
+  .ae-cursor-ring, .ae-cursor-dot { display: none !important; }
 }
 
+/* ==========================================================================
+   SMALL PHONES (≤ 420px) — iPhone SE, Vivo Y-series, Samsung A-series
+   ========================================================================== */
 @media (max-width: 420px) {
-  .hero h1 { font-size: 44px; }
-  .hero-art { height: 390px; }
-  .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gallery-photo:nth-child(3n+2) { margin-top: 0; }
-  .gallery-photo:nth-child(2n) { margin-top: 18px; }
+  .section { padding-left: 4.5%; padding-right: 4.5%; }
+
+  /* Hero title: readable on tiny screens */
+  .hero { padding-top: 95px; padding-bottom: 55px; gap: 16px; }
+  .hero-dedication { font-size: 14px; margin-top: 14px; margin-bottom: 8px; }
+  .hero h1 { font-size: clamp(32px, 9vw, 42px); }
+  .hero-description { font-size: 12px; }
+  .hero-art { height: 320px; width: 92%; max-width: 340px; }
+  .main-photo { height: 230px; width: 60%; top: 25px; left: 20%; padding: 5px 5px 22px; }
+  .main-photo { border-radius: 100px 100px 8px 8px; }
+  .main-photo img { border-radius: 95px 95px 4px 4px; }
+  .satellite-one { height: 125px; width: 29%; padding: 4px 4px 18px; }
+  .satellite-two { height: 130px; width: 31%; padding: 4px 4px 18px; }
+  .hero-photo figcaption { font-size: 8.5px; bottom: 3px; }
+  .photo-note { display: none; }
+
+  .pill-button { padding: 12px 18px; font-size: 10px; gap: 12px; }
+  .hero-signature { font-size: 13px; }
+  .hero-signature span:last-child { font-size: 18px; }
+
+  /* Memory section */
+  .memory-heading h2 { font-size: clamp(28px, 8vw, 36px); }
+  .memory-quote { font-size: 18px; }
+  .drawn-heart { font-size: 42px; }
+
+  /* Gallery: 2-column only */
+  .gallery-heading h2 { font-size: clamp(28px, 8vw, 36px); }
+  .gallery-grid { gap: 10px 8px; }
+  .gallery-image { border-radius: 8px; }
+  .gallery-photo .photo-label { font-size: 8px; margin-top: 6px; }
+
+  /* Letter */
+  .letter-heading h2 { font-size: clamp(28px, 7.5vw, 38px); }
+  .letter-paper { padding: 22px 16px; }
+  .letter-paper > p { font-size: 13px; line-height: 1.95; }
+  .letter-paper > .salutation { font-size: 22px; }
+  .letter-paper blockquote { font-size: 16px; padding: 18px 12px; margin: 20px -4px; }
+  .signature-name { font-size: 32px; }
+  .signature-heart { font-size: 50px; }
+
+  /* Forever */
+  .forever-copy h2 { font-size: clamp(28px, 7vw, 36px); }
+  .hug-button { padding: 12px 18px; font-size: 11px; gap: 12px; min-height: 48px; }
+  .hug-heart { font-size: 22px; }
+
+  /* Cinema */
+  .cinema { min-height: 360px; padding-top: 50px; padding-bottom: 50px; }
+  .cinema h2 { font-size: clamp(24px, 6.5vw, 34px); }
+
+  /* Envelope */
+  .envelope { width: 175px; height: 115px; margin: 24px auto 14px; }
+  .envelope-letter { width: 150px; height: 92px; top: 11px; left: 12px; padding: 8px 8px 5px; }
+  .envelope-letter .letter-greeting { font-size: 16px; }
+  .envelope-letter .letter-snippet { font-size: 8px; }
+  .wax-seal { width: 36px; height: 36px; left: 70px; top: 42px; font-size: 14px; }
+  .opening .envelope-letter { transform: translateY(-22px); }
+
+  .welcome-content h2 { font-size: clamp(24px, 6.5vw, 36px); }
+  .welcome-to { font-size: 16px; }
+  .welcome-from { font-size: 12px; }
+
+  /* Footer */
+  .footer-mark { font-size: 24px; }
+  .footer-mark span { font-size: 20px; }
+}
+
+/* ==========================================================================
+   VERY SMALL PHONES (≤ 360px) — iPhone SE 1st gen, Compact Android
+   ========================================================================== */
+@media (max-width: 360px) {
+  .section { padding-left: 4%; padding-right: 4%; }
+  .hero { padding-top: 88px; }
+  .hero h1 { font-size: 30px; }
+  .hero-dedication { font-size: 13px; }
+  .hero-art { height: 280px; max-width: 300px; }
+  .main-photo { height: 200px; width: 58%; padding: 4px 4px 18px; }
+  .main-photo { border-radius: 85px 85px 8px 8px; }
+  .main-photo img { border-radius: 81px 81px 3px 3px; }
+  .satellite-one { height: 105px; width: 28%; }
+  .satellite-two { height: 110px; width: 30%; }
+  .pill-button { padding: 11px 16px; font-size: 9.5px; }
+
+  .cinema h2 { font-size: 22px; }
+  .cinema-star { font-size: 22px; margin: 12px 0; }
+  .cinema-coordinate { font-size: 7px; padding: 5px 12px; }
+
+  .gallery-grid { gap: 8px 6px; }
+  .gallery-end { font-size: 15px; }
+
+  .letter-heading h2 { font-size: 26px; }
+  .letter-paper { padding: 18px 14px; }
+  .letter-paper > .salutation { font-size: 20px; }
+  .letter-paper blockquote { font-size: 14px; }
+  .signature-name { font-size: 28px; }
+  .signature-heart { font-size: 42px; right: 2px; }
+
+  .forever-copy h2 { font-size: 26px; }
+  .forever-image { width: 50%; max-width: 200px; }
+
+  .envelope { width: 155px; height: 102px; }
+  .envelope-letter { width: 132px; height: 80px; left: 11px; top: 10px; padding: 7px; }
+  .envelope-letter .letter-greeting { font-size: 14px; }
+  .wax-seal { width: 32px; height: 32px; left: 62px; top: 38px; font-size: 12px; }
+}
+
+/* ==========================================================================
+   LANDSCAPE PHONES — Prevent content being cut off
+   ========================================================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { padding-top: 80px; padding-bottom: 40px; min-height: auto; }
+  .hero-art { height: 250px; }
+  .main-photo { height: 180px; }
+  .satellite-one { height: 110px; }
+  .satellite-two { height: 115px; }
+  .cinema { min-height: 300px; padding-top: 40px; padding-bottom: 40px; }
+  #welcome { padding-top: 10px; padding-bottom: 10px; }
+  .welcome-content { padding: 10px 16px; }
+  .envelope { width: 160px; height: 105px; margin: 16px auto 10px; }
+  .welcome-content h2 { font-size: 26px; }
+}
+
+/* ==========================================================================
+   HIGH-DPI & SAFE-AREA NOTCH HANDLING (iPhone X+, modern Android)
+   ========================================================================== */
+@supports (padding: max(0px)) {
+  .site-header {
+    padding-top: max(12px, env(safe-area-inset-top, 12px));
+    padding-left: max(4.5%, env(safe-area-inset-left, 4.5%));
+    padding-right: max(4.5%, env(safe-area-inset-right, 4.5%));
+  }
+  footer {
+    padding-bottom: max(85px, calc(75px + env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+/* ==========================================================================
+   SMOOTH TOUCH SCROLLING REFINEMENTS
+   ========================================================================== */
+@media (pointer: coarse) {
+  /* Bigger touch targets for photo gallery */
+  .gallery-photo { min-height: 44px; }
+  .gallery-image:after { opacity: 0.6; transform: none; }
+
+  /* No hover effects on touch (prevent stuck states) */
+  .hero-photo:hover { transform: none; }
+  .hero-photo:hover img { filter: saturate(1.08) contrast(1.03) brightness(1.02); }
+  .memory-photo:hover { transform: none; border-color: var(--glass-border); }
+  .gallery-photo:hover { transform: none; }
+  .gallery-photo:hover .gallery-image { border-color: var(--glass-border); }
+  .forever-image:hover { transform: rotate(-6deg); }
+
+  /* Smooth momentum scrolling for iOS */
+  .gallery-grid, main { -webkit-overflow-scrolling: touch; }
 }

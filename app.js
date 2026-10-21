@@ -606,6 +606,15 @@ function openGift(skip = false) {
     burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 85);
   }
 
+  const flash = document.querySelector('.ae-portal-flash');
+  if (flash && typeof gsap !== 'undefined') {
+    gsap.fromTo(
+      flash,
+      { opacity: 0.85 },
+      { opacity: 0, duration: 1.3, ease: 'power2.out', delay: 0.75 }
+    );
+  }
+
   if (typeof gsap !== 'undefined' && !skip && !motionReduced) {
     // Cho phép người dùng nhìn thấy nắp thư mở và lá thư trượt lên nằm trọn trong bao thư trước khi phóng qua camera
     gsap.delayedCall(0.75, () => {
@@ -669,6 +678,9 @@ function openGift(skip = false) {
 $('#open-gift')?.addEventListener('click', () => openGift(false));
 $('#skip-intro')?.addEventListener('click', () => openGift(true));
 welcome?.addEventListener('cancel', event => { event.preventDefault(); openGift(false); });
+welcome?.addEventListener('click', event => {
+  if (event.target === welcome) openGift(false);
+});
 
 if (welcome && typeof welcome.showModal === 'function') {
   welcome.showModal();
@@ -791,13 +803,16 @@ photoDialog?.addEventListener('close', () => {
 let touchStartX = 0;
 let touchStartY = 0;
 photoDialog?.addEventListener('touchstart', e => {
-  touchStartX = e.changedTouches[0].screenX;
-  touchStartY = e.changedTouches[0].screenY;
+  if (e.changedTouches && e.changedTouches[0]) {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }
 }, { passive: true });
 
 photoDialog?.addEventListener('touchend', e => {
-  const touchEndX = e.changedTouches[0].screenX;
-  const touchEndY = e.changedTouches[0].screenY;
+  if (!e.changedTouches || !e.changedTouches[0]) return;
+  const touchEndX = e.changedTouches[0].clientX;
+  const touchEndY = e.changedTouches[0].clientY;
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
 
@@ -818,6 +833,7 @@ photoDialog?.addEventListener('touchend', e => {
    LUXURY 3D PHOTO CARD PARALLAX TILT & HOVER INTERACTION
    ========================================================================== */
 function initPhotoTiltEffects() {
+  if (!finePointer.matches) return; // Only enable on desktop mouse hover; avoid touch scroll interference
   const photoCards = document.querySelectorAll('.gallery-photo, .memory-photo, .hero-photo');
   photoCards.forEach(card => {
     card.addEventListener('pointerenter', () => {
@@ -1224,6 +1240,7 @@ function restartCanvas() {
    EVENT LISTENERS & INTERACTION BINDINGS
    ========================================================================== */
 window.addEventListener('pointermove', event => {
+  if (event.pointerType === 'touch') return;
   pointer.x = event.clientX;
   pointer.y = event.clientY;
 
@@ -1243,6 +1260,30 @@ window.addEventListener('pointermove', event => {
         : (Math.random() > 0.5 ? '#55efc4' : '#38bdf8')
     });
     if (trailParticles.length > 80) trailParticles.shift();
+  }
+}, { passive: true });
+
+// Touch fairy sparkles for mobile screens
+window.addEventListener('touchstart', e => {
+  if (e.touches && e.touches.length > 0) {
+    const touch = e.touches[0];
+    pointer.x = touch.clientX;
+    pointer.y = touch.clientY;
+    if (!motionReduced && giftOpened) {
+      const isGhibli = currentTheme === 'ghibli';
+      trailParticles.push({
+        x: touch.clientX,
+        y: touch.clientY,
+        vx: (Math.random() - 0.5) * 20,
+        vy: -Math.random() * 25 - 10,
+        age: 0,
+        life: 0.75,
+        size: 2.5 + Math.random() * 3,
+        heart: Math.random() > 0.5,
+        color: isGhibli ? '#7bed9f' : '#55efc4'
+      });
+      if (trailParticles.length > 50) trailParticles.shift();
+    }
   }
 }, { passive: true });
 
@@ -1280,12 +1321,23 @@ $('#hug-button')?.addEventListener('click', event => {
   burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 130);
   playASMR('heart');
 
+  const closingImage = document.querySelector('.forever-image img');
+  if (closingImage) {
+    closingImage.classList.add('ae-surprise-glow');
+    if (typeof gsap !== 'undefined') {
+      gsap.fromTo(closingImage, { scale: 0.95 }, { scale: 1.04, duration: 1.2, ease: 'elastic.out(1, 0.4)' });
+    }
+  }
+
   const msg = $('#final-message');
   if (msg) {
     msg.textContent = currentTheme === 'ghibli'
       ? 'Hôm nay, ngày mai, và mọi mùa hoa nở. Anh thương em, Châu Nhi ngốc xít. 🌸♡'
       : 'Hôm nay, ngày mai, và những ngày sau nữa. Anh thương em, Châu Nhi. ♡';
     msg.classList.add('received');
+    if (typeof gsap !== 'undefined') {
+      gsap.fromTo(msg, { y: 14, opacity: 0, filter: 'blur(6px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'expo.out' });
+    }
   }
 });
 
@@ -1367,11 +1419,14 @@ let lenis = null;
 function initLenisSmoothScroll() {
   if (typeof Lenis === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   try {
+    const isMobile = window.innerWidth <= 760;
     lenis = new Lenis({
-      duration: 1.25,
+      duration: isMobile ? 1.0 : 1.25,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
       wheelMultiplier: 0.9,
+      touchMultiplier: 1.2,
+      smoothTouch: false, // Ensure native 120Hz touch scrolling is ultra-smooth on iOS & Android
     });
 
     if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
@@ -1397,26 +1452,31 @@ function animateHeroFanOut() {
   const heroFigures = heroSection.querySelectorAll('figure');
   const heroHeading = heroSection.querySelector('h1');
 
+  const isMobile = window.innerWidth <= 760;
+
   if (heroFigures.length >= 3) {
     gsap.fromTo(
       heroFigures,
       {
-        y: 75,
+        y: isMobile ? 35 : 75,
         rotation: 0,
-        scale: 0.85,
+        scale: isMobile ? 0.92 : 0.85,
         opacity: 0,
         filter: 'blur(8px)',
       },
       {
         y: 0,
-        rotation: (i) => (i === 0 ? -6 : i === 1 ? 4 : -2),
+        rotation: (i) => (isMobile
+          ? (i === 0 ? -3 : i === 1 ? -8 : 7)
+          : (i === 0 ? -6 : i === 1 ? 4 : -2)
+        ),
         scale: 1,
         opacity: 1,
         filter: 'blur(0px)',
-        duration: 1.6,
-        stagger: 0.18,
+        duration: 1.5,
+        stagger: 0.16,
         ease: 'expo.out',
-        delay: 0.3,
+        delay: 0.2,
       }
     );
 
@@ -1521,16 +1581,17 @@ function initAEMotionGraphics() {
   // B. CHƯƠNG 01: CLIP-PATH CURTAIN REVEAL & STAGGERED PARALLAX
   if (memoriesSection) {
     const memFigures = memoriesSection.querySelectorAll('figure');
+    const isMobile = window.innerWidth <= 760;
     memFigures.forEach((fig, index) => {
       const img = fig.querySelector('img');
 
       gsap.fromTo(
         fig,
-        { clipPath: 'inset(18% 8% 18% 8% round 24px)', y: 45 },
+        { clipPath: isMobile ? 'inset(10% 4% 10% 4% round 16px)' : 'inset(18% 8% 18% 8% round 24px)', y: isMobile ? 25 : 45 },
         {
-          clipPath: 'inset(0% 0% 0% 0% round 16px)',
+          clipPath: 'inset(0% 0% 0% 0% round 14px)',
           y: 0,
-          duration: 1.4,
+          duration: 1.3,
           ease: 'power4.out',
           scrollTrigger: {
             trigger: fig,
@@ -1542,10 +1603,10 @@ function initAEMotionGraphics() {
       if (img) {
         gsap.fromTo(
           img,
-          { scale: 1.22, yPercent: -8 },
+          { scale: 1.15, yPercent: -5 },
           {
             scale: 1,
-            yPercent: 8,
+            yPercent: 5,
             ease: 'none',
             scrollTrigger: {
               trigger: fig,
@@ -1558,7 +1619,7 @@ function initAEMotionGraphics() {
       }
 
       gsap.to(fig, {
-        y: index % 2 === 0 ? -30 : 25,
+        y: index % 2 === 0 ? -20 : 15,
         ease: 'none',
         scrollTrigger: {
           trigger: memoriesSection,
@@ -1574,11 +1635,12 @@ function initAEMotionGraphics() {
   if (videoSection) {
     const videoEl = videoSection.querySelector('video');
     const videoText = videoSection.querySelector('.cinema-copy') || videoSection.querySelector('div:last-of-type');
+    const isMobile = window.innerWidth <= 760;
 
     gsap.fromTo(
       videoSection,
       {
-        clipPath: 'inset(12% 14% 12% 14% round 160px)',
+        clipPath: isMobile ? 'inset(8% 6% 8% 6% round 40px)' : 'inset(12% 14% 12% 14% round 160px)',
       },
       {
         clipPath: 'inset(0% 0% 0% 0% round 0px)',
@@ -1634,7 +1696,8 @@ function initAEMotionGraphics() {
   if (gallerySection) {
     let proxy = { skew: 0 };
     let skewSetter = gsap.quickSetter(gallerySection, 'skewY', 'deg');
-    let clamp = gsap.utils.clamp(-3.5, 3.5);
+    const isMobile = window.innerWidth <= 760;
+    let clamp = gsap.utils.clamp(isMobile ? -1.8 : -3.5, isMobile ? 1.8 : 3.5);
 
     ScrollTrigger.create({
       trigger: gallerySection,
